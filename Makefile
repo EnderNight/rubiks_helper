@@ -7,20 +7,23 @@ BINDIR = bin
 
 
 # Compiler flags
-CXX = g++
-CXXFLAGS = -MMD
-CFLAGS = -Wall -Wextra -pedantic -std=c++20 -I$(INCDIR)
+CC = gcc
+CPPFLAGS = -MMD
+CFLAGS = -Wall -Wextra -pedantic -std=gnu2x -I$(INCDIR)
 LDFLAGS = -fsanitize=address -ggdb
 LDLIBS =
 
 
 
 # Source files
-SRC = $(shell find $(SRCDIR) -maxdepth 1 -type f -name "*.cpp")
+SRC = $(shell find $(SRCDIR) -maxdepth 1 -type f -name "*.c")
 HDR = $(shell find $(INCDIR) -maxdepth 1 -type f -name "*.h")
 
 # Object files
-OBJ = $(patsubst $(SRCDIR)/%, $(OBJDIR)/%, $(SRC:.cpp=.o))
+OBJ = $(patsubst $(SRCDIR)/%, $(OBJDIR)/%, $(SRC:.c=.o))
+
+# Prerequisities
+DEP = $(OBJ:.o=.d)
 
 # Targets
 TARGET = rubiks_helper
@@ -31,14 +34,16 @@ TARGET = rubiks_helper
 
 all: $(TARGET)
 
+-include $(DEP)
+
 $(TARGET): $(OBJ)
 	@mkdir -p $(BINDIR)
-	$(CXX) $(CXXFLAGS) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $(BINDIR)/$(TARGET)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $(BINDIR)/$(TARGET)
 
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HDR)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(OBJDIR)
-	$(CXX) $(CXXFLAGS) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $< -c -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $< -c -o $@
 
 
 .PHONY: clean all
