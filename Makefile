@@ -11,7 +11,7 @@ CC = gcc
 CPPFLAGS = -MMD
 CFLAGS = -Wall -Wextra -pedantic -std=gnu2x -I$(INCDIR)
 LDFLAGS = -fsanitize=address -ggdb
-LDLIBS =
+LDLIBS = -lncurses
 
 
 
